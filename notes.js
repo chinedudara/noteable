@@ -1,4 +1,5 @@
 const fs = require('fs');
+const chalk = require('chalk');
 
 let retrieveNotes = () => {
   try {
@@ -20,15 +21,15 @@ let addNote = (title, body) => {
       body
     };
     notes = retrieveNotes();
-    let duplicateNotes = notes.filter((note) => note.title === title);
-    if (duplicateNotes.length === 0) {
+    let duplicateNote = notes.find((note) => note.title === title);
+    if (!duplicateNote) {
       notes.push(note);
       saveNotes(notes);
       return {
         note,
-        msg : 'Note added'
+        msg : chalk.green.inverse('Note added')
       };
-    } else {return {msg : 'Add failed! Duplicate title exists.'}};
+    } else {return {msg : chalk.red.inverse('Add failed! Duplicate title exists.')}};
 };
 
 let getAll = () => {
@@ -36,20 +37,20 @@ let getAll = () => {
   if (allNotes.length) {
     return {
       note: allNotes,
-      msg: `Printing ${allNotes.length} note(s)`
+      msg: chalk`{green Printing ${chalk.green.inverse(allNotes.length)} note(s)}`
     }
-  } else {return {msg: 'No notes!'}};
+  } else {return {msg: chalk.blue.inverse('No notes!')}};
 };
 
 let getNote = (title) => {
     let notes = retrieveNotes();
-    let noteMatch = notes.filter((note) => note.title === title);
-    if (noteMatch.length) {
+    let noteMatch = notes.find((note) => note.title === title);
+    if (noteMatch) {
       return {
         note: noteMatch[0],
-        msg: 'Note found.'
+        msg: chalk.green.inverse('Note found.')
       };
-    } else {return {msg: 'Note not found!'}};
+    } else {return {msg: chalk.red.inverse('Note not found!')}};
 };
 
 let removeNote = (title) => {
@@ -57,14 +58,14 @@ let removeNote = (title) => {
     let notesFltrd = notes.filter((note) => note.title !== title);
     if (notesFltrd.length !== notes.length) {
       saveNotes(notesFltrd);
-      return 'Note removed.';
-    } else {return 'Delete failed. Note not found'};
+      return chalk.green.inverse('Note removed.');
+    } else {return chalk.red.inverse('Remove failed. Note not found')};
 };
 
 let logNote = (note) => {
   console.log('-----');
-  console.log('Title: ', note.title)
-  console.log('Body: ', note.body)
+  console.log(chalk.bold.yellowBright('Title: '), chalk.yellow(note.title))
+  console.log(chalk.bold.blueBright('Body: '), note.body)
 }
 
 module.exports = {
